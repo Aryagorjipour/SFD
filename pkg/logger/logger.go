@@ -1,4 +1,4 @@
-package logger
+package loggerInfoLogger
 
 import (
 	"log"
@@ -6,7 +6,9 @@ import (
 )
 
 var (
-	InfoLogger  *log.Logger
+	// InfoLogger is a logger for informational messages
+	InfoLogger *log.Logger
+	// ErrorLogger is a logger for error messages
 	ErrorLogger *log.Logger
 )
 
