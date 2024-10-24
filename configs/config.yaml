@@ -1,0 +1,2 @@
+download_directory: "./downloads"
+max_concurrent_downloads: 5
