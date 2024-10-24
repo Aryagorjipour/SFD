@@ -59,11 +59,11 @@ func (dt *DownloadTask) Start() {
 	var err error
 	var downloaded int64 = 0
 
-	if _, err = os.Stat(filePath); err == nil {
-		file, err = os.OpenFile(filePath, os.O_APPEND|os.O_WRONLY, 0600)
+	if _, err = os.Stat("./" + filePath); err == nil {
+		file, err = os.OpenFile("./"+filePath, os.O_APPEND|os.O_WRONLY, 0600)
 		if err != nil {
 			dt.updateStatus("Error")
-			fmt.Printf("Error opening file %s: %v\n", filePath, err)
+			fmt.Printf("Error opening file %s: %v\n", "./"+filePath, err)
 			return
 		}
 		fi, err := file.Stat()
@@ -71,17 +71,17 @@ func (dt *DownloadTask) Start() {
 			downloaded = fi.Size()
 		}
 	} else {
-		file, err = os.Create(filePath)
+		file, err = os.Create("./" + filePath)
 		if err != nil {
 			dt.updateStatus("Error")
-			fmt.Printf("Error creating file %s: %v\n", filePath, err)
+			fmt.Printf("Error creating file %s: %v\n", "./"+filePath, err)
 			return
 		}
 	}
 	defer func(file *os.File) {
 		err := file.Close()
 		if err != nil {
-			fmt.Printf("Error closing file %s: %v\n", filePath, err)
+			fmt.Printf("Error closing file %s: %v\n", "./"+filePath, err)
 		}
 	}(file)
 
