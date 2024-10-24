@@ -10,6 +10,7 @@ import (
 	"time"
 )
 
+// Start starts the UI
 func Start(mgr *manager.DownloadManager) {
 	reader := bufio.NewReader(os.Stdin)
 	fmt.Println("Concurrent File Downloader")

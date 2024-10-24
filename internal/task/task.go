@@ -12,6 +12,7 @@ import (
 	"sync"
 )
 
+// DownloadTask represents a download task
 type DownloadTask struct {
 	ID          int
 	URL         string
@@ -27,6 +28,7 @@ type DownloadTask struct {
 	resumeChan chan struct{}
 }
 
+// NewDownloadTask creates a new DownloadTask
 func NewDownloadTask(id int, url, downloadDir string) *DownloadTask {
 	ctx, cancel := context.WithCancel(context.Background())
 	return &DownloadTask{
@@ -41,6 +43,7 @@ func NewDownloadTask(id int, url, downloadDir string) *DownloadTask {
 	}
 }
 
+// Start starts the download task
 func (dt *DownloadTask) Start() {
 	dt.mu.Lock()
 	dt.Status = "Downloading"
@@ -57,7 +60,7 @@ func (dt *DownloadTask) Start() {
 	var downloaded int64 = 0
 
 	if _, err = os.Stat(filePath); err == nil {
-		file, err = os.OpenFile(filePath, os.O_APPEND|os.O_WRONLY, 0644)
+		file, err = os.OpenFile(filePath, os.O_APPEND|os.O_WRONLY, 0600)
 		if err != nil {
 			dt.updateStatus("Error")
 			fmt.Printf("Error opening file %s: %v\n", filePath, err)
@@ -75,7 +78,12 @@ func (dt *DownloadTask) Start() {
 			return
 		}
 	}
-	defer file.Close()
+	defer func(file *os.File) {
+		err := file.Close()
+		if err != nil {
+			fmt.Printf("Error closing file %s: %v\n", filePath, err)
+		}
+	}(file)
 
 	// Create HTTP request with Range header for resuming
 	req, err := http.NewRequestWithContext(dt.ctx, "GET", dt.URL, nil)
@@ -89,7 +97,12 @@ func (dt *DownloadTask) Start() {
 		fmt.Printf("Error downloading %s: %v\n", dt.URL, err)
 		return
 	}
-	defer resp.Body.Close()
+	defer func(Body io.ReadCloser) {
+		err := Body.Close()
+		if err != nil {
+			fmt.Printf("Error closing response body: %v\n", err)
+		}
+	}(resp.Body)
 
 	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusPartialContent {
 		dt.updateStatus("Error")
@@ -154,6 +167,7 @@ func (dt *DownloadTask) Start() {
 	}
 }
 
+// Pause pauses the download task
 func (dt *DownloadTask) Pause() {
 	dt.mu.Lock()
 	defer dt.mu.Unlock()
@@ -164,6 +178,7 @@ func (dt *DownloadTask) Pause() {
 	dt.paused = true
 }
 
+// Resume resumes the download task
 func (dt *DownloadTask) Resume() {
 	dt.mu.Lock()
 	defer dt.mu.Unlock()
@@ -174,6 +189,7 @@ func (dt *DownloadTask) Resume() {
 	dt.resumeChan <- struct{}{}
 }
 
+// Cancel cancels the download task
 func (dt *DownloadTask) Cancel() {
 	dt.cancelFunc()
 }

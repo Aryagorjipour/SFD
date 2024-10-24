@@ -6,6 +6,7 @@ import (
 	"sync"
 )
 
+// DownloadManager manages download tasks
 type DownloadManager struct {
 	Tasks       map[int]*task.DownloadTask
 	DownloadDir string
@@ -13,6 +14,7 @@ type DownloadManager struct {
 	NextID      int
 }
 
+// NewDownloadManager creates a new DownloadManager
 func NewDownloadManager(downloadDir string) (*DownloadManager, error) {
 	// Initialize download directory, create if not exists
 	// (Error handling omitted for brevity)
@@ -23,6 +25,7 @@ func NewDownloadManager(downloadDir string) (*DownloadManager, error) {
 	}, nil
 }
 
+// AddDownload adds a new download task to the manager
 func (dm *DownloadManager) AddDownload(url string) int {
 	dm.Mu.Lock()
 	defer dm.Mu.Unlock()
@@ -35,6 +38,7 @@ func (dm *DownloadManager) AddDownload(url string) int {
 	return id
 }
 
+// ListDownloads lists all download tasks
 func (dm *DownloadManager) ListDownloads() {
 	dm.Mu.Lock()
 	defer dm.Mu.Unlock()
@@ -44,6 +48,7 @@ func (dm *DownloadManager) ListDownloads() {
 	}
 }
 
+// PauseDownload pauses a download task
 func (dm *DownloadManager) PauseDownload(id int) {
 	dm.Mu.Lock()
 	defer dm.Mu.Unlock()
@@ -54,6 +59,7 @@ func (dm *DownloadManager) PauseDownload(id int) {
 	}
 }
 
+// ResumeDownload resumes a paused download task
 func (dm *DownloadManager) ResumeDownload(id int) {
 	dm.Mu.Lock()
 	defer dm.Mu.Unlock()
@@ -64,6 +70,7 @@ func (dm *DownloadManager) ResumeDownload(id int) {
 	}
 }
 
+// CancelDownload cancels a download task
 func (dm *DownloadManager) CancelDownload(id int) {
 	dm.Mu.Lock()
 	defer dm.Mu.Unlock()
@@ -74,13 +81,14 @@ func (dm *DownloadManager) CancelDownload(id int) {
 	}
 }
 
+// GetTasks returns copy of all download tasks for test purposes
 func (dm *DownloadManager) GetTasks() map[int]*task.DownloadTask {
 	dm.Mu.Lock()
 	defer dm.Mu.Unlock()
-	// Create a copy to prevent race conditions
-	copy := make(map[int]*task.DownloadTask)
+	// Create a copyTasks to prevent race conditions
+	copyTasks := make(map[int]*task.DownloadTask)
 	for k, v := range dm.Tasks {
-		copy[k] = v
+		copyTasks[k] = v
 	}
-	return copy
+	return copyTasks
 }

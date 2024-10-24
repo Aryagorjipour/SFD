@@ -9,7 +9,8 @@ import (
 
 func ensureDownloadDir(dir string) error {
 	if _, err := os.Stat(dir); os.IsNotExist(err) {
-		err := os.MkdirAll(dir, os.ModePerm)
+		mode := int(0750)
+		err := os.MkdirAll(dir, os.FileMode(mode))
 		if err != nil {
 			return fmt.Errorf("failed to create directory %s: %v", dir, err)
 		}

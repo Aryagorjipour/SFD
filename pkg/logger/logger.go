@@ -15,10 +15,12 @@ func init() {
 	ErrorLogger = log.New(os.Stderr, "ERROR: ", log.Ldate|log.Ltime|log.Lshortfile)
 }
 
+// Info logs an informational message
 func Info(msg string) {
 	InfoLogger.Println(msg)
 }
 
+// Error logs an error message
 func Error(msg string) {
 	ErrorLogger.Println(msg)
 }
