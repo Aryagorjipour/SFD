@@ -1,4 +1,4 @@
-package loggerInfoLogger
+package loggerinfologger
 
 import (
 	"log"
