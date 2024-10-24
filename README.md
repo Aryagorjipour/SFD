@@ -1,4 +1,4 @@
-# Concurrent File Downloader
+# SFD (Smart File Downloader)
 
 A command-line application written in Go that allows users to download multiple files concurrently with features like pausing, resuming, and canceling downloads.
 
@@ -15,8 +15,8 @@ A command-line application written in Go that allows users to download multiple 
 1. **Clone the Repository:**
 
    ```bash
-   git clone https://github.com/yourusername/concurrent-file-downloader.git
-   cd concurrent-file-downloader
+   git clone https://github.com/Aryagorjipour/SFD.git
+   cd SFD
    ```
 
 2. **Build the Application:**
