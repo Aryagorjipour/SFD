@@ -1,5 +1,9 @@
 # SFD (Smart File Downloader)
 
+![License](https://img.shields.io/github/license/Aryagorjipour/SFD)
+![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/Aryagorjipour/SFD/ci.yml)
+![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/Aryagorjipour/SFD)
+
 A command-line application written in Go that allows users to download multiple files concurrently with features like pausing, resuming, and canceling downloads.
 
 ## Features
