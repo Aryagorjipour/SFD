@@ -1,0 +1,57 @@
+{
+  "name": "smart-file-downloader",
+  "version": "1.0.0",
+  "description": "A smart file downloader with Go backend and Electron UI",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder -wl"
+  },
+  "homepage": "https://github.com/Aryagorjipour/SFD",
+  "author": {
+    "name": "Arya (ArySmart) Gorjipour",
+    "email": "arygorji.pour@gmail.com"
+  },
+  "maintainer": "Arya Gorjipour <arygorji.pour@gmail.com>",
+  "license": "MIT",
+  "build": {
+    "appId": "ir.arysmart.sfd",
+    "productName": "Smart File Downloader",
+    "files": [
+      "dist/**/*",
+      "binaries/**/*",
+      "main.js",
+      "preload.js",
+      "index.html",
+      "node_modules/**/*",
+      "package.json"
+    ],
+    "directories": {
+      "output": "release-builds"
+    },
+    "extraResources": [
+      {
+        "from": "dist/",
+        "to": "binaries/",
+        "filter": [
+          "**/*"
+        ]
+      }
+    ],
+    "win": {
+      "target": "nsis",
+      "icon": "assets/icon.ico"
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ],
+      "icon": "assets/icon.png"
+    }
+  },
+  "devDependencies": {
+    "electron": "27.0.0-beta.8",
+    "electron-builder": "^25.1.8"
+  }
+}

@@ -205,3 +205,22 @@ func (dt *DownloadTask) updateStatus(status string) {
 	dt.Status = status
 	dt.mu.Unlock()
 }
+
+// GetProgress returns the current progress of the download
+func (dt *DownloadTask) GetProgress() float64 {
+	dt.mu.Lock()
+	defer dt.mu.Unlock()
+	return dt.Progress
+}
+
+// GetStatus returns the current status of the download
+func (dt *DownloadTask) GetStatus() string {
+	dt.mu.Lock()
+	defer dt.mu.Unlock()
+	return dt.Status
+}
+
+// GetURL returns the URL of the download task
+func (dt *DownloadTask) GetURL() string {
+	return dt.URL
+}

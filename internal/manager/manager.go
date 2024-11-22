@@ -3,8 +3,16 @@ package manager
 import (
 	"fmt"
 	"github.com/Aryagorjipour/smart-file-downloader/internal/task"
+	"sort"
 	"sync"
 )
+
+type DownloadStatus struct {
+	ID       int     `json:"id"`
+	URL      string  `json:"url"`
+	Progress float64 `json:"progress"`
+	Status   string  `json:"status"`
+}
 
 // DownloadManager manages download tasks
 type DownloadManager struct {
@@ -16,8 +24,6 @@ type DownloadManager struct {
 
 // NewDownloadManager creates a new DownloadManager
 func NewDownloadManager(downloadDir string) (*DownloadManager, error) {
-	// Initialize download directory, create if not exists
-	// (Error handling omitted for brevity)
 	return &DownloadManager{
 		Tasks:       make(map[int]*task.DownloadTask),
 		DownloadDir: downloadDir,
@@ -34,7 +40,6 @@ func (dm *DownloadManager) AddDownload(url string) int {
 	t := task.NewDownloadTask(id, url, dm.DownloadDir)
 	dm.Tasks[id] = t
 	go t.Start()
-	fmt.Printf("Download added with ID %d\n", id)
 	return id
 }
 
@@ -91,4 +96,39 @@ func (dm *DownloadManager) GetTasks() map[int]*task.DownloadTask {
 		copyTasks[k] = v
 	}
 	return copyTasks
+}
+
+// GetAllDownloadStatuses returns the status of all download tasks
+func (dm *DownloadManager) GetAllDownloadStatuses() []DownloadStatus {
+	dm.Mu.Lock()
+	defer dm.Mu.Unlock()
+
+	var statuses []DownloadStatus
+	for id, t := range dm.Tasks {
+		status := DownloadStatus{
+			ID:       id,
+			URL:      t.GetURL(),
+			Progress: t.GetProgress(),
+			Status:   t.GetStatus(),
+		}
+		statuses = append(statuses, status)
+	}
+
+	sort.Slice(statuses, func(i, j int) bool {
+		return statuses[i].ID < statuses[j].ID
+	})
+
+	return statuses
+}
+
+// ClearCancelledDownloads removes all cancelled download tasks from the manager
+func (dm *DownloadManager) ClearCancelledDownloads() {
+	dm.Mu.Lock()
+	defer dm.Mu.Unlock()
+
+	for id, downloadTask := range dm.Tasks {
+		if downloadTask.GetStatus() == "Error" {
+			delete(dm.Tasks, id)
+		}
+	}
 }

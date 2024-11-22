@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Downloader</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+<h1>File Downloader</h1>
+<label for="url">URL: </label>
+<input type="text" id="url" placeholder="Enter file URL">
+<button onclick="startDownload()">Download</button>
+<button onclick="clearCancelledHistory()">Clear Cancelled History</button>
+<p id="status"></p>
+
+<h2>Download Status</h2>
+<table>
+    <thead>
+    <tr>
+        <th>URL</th>
+        <th>Progress (%)</th>
+        <th>Status</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody id="status-table">
+    </tbody>
+</table>
+
+<script>
+    function startDownload() {
+        const url = document.getElementById('url').value;
+        if (url) {
+            console.log('Starting download for URL:', url); // لاگ برای دیباگ
+            window.electron.startDownload(url);
+            document.getElementById('url').value = ''; // پاک‌کردن فیلد ورودی پس از کلیک روی دکمه دانلود
+
+        } else {
+            document.getElementById('status').innerText = 'Please enter a valid URL.';
+        }
+    }
+
+    function pauseDownload(id) {
+        console.log('Pausing download with ID:', id); // لاگ برای دیباگ
+        window.electron.pauseDownload(id);
+    }
+
+    function resumeDownload(id) {
+        console.log('Resuming download with ID:', id); // لاگ برای دیباگ
+        window.electron.resumeDownload(id);
+    }
+
+    function cancelDownload(id) {
+        console.log('Cancelling download with ID:', id); // لاگ برای دیباگ
+        window.electron.cancelDownload(id);
+    }
+
+    function clearCancelledHistory() {
+        console.log('Clearing cancelled history'); // لاگ برای دیباگ
+        window.electron.clearCancelledDownloads();
+    }
+
+    window.electron.onDownloadStatus((status) => {
+        document.getElementById('status').innerText = status;
+    });
+
+    window.electron.onDownloadStatusUpdate((statuses) => {
+        console.log('Updating download statuses table:', statuses); // لاگ برای دیباگ
+        const statusTable = document.getElementById('status-table');
+        statusTable.innerHTML = ''; // پاک‌کردن جدول قبلی
+
+        statuses.forEach(status => {
+            console.log('Status:', status); // اضافه کردن لاگ برای هر ردیف داده دریافتی
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${status.url}</td>
+                <td>${status.progress.toFixed(2)}%</td>
+                <td>${status.status}</td>
+                <td>${generateActionButtons(status)}</td>
+            `;
+            statusTable.appendChild(row);
+        });
+    });
+
+    function generateActionButtons(status) {
+        switch (status.status) {
+            case 'Downloading':
+                return `
+                    <button onclick="pauseDownload(${status.id})">Pause</button>
+                    <button onclick="cancelDownload(${status.id})">Cancel</button>
+                `;
+            case 'Paused':
+                return `
+                    <button onclick="resumeDownload(${status.id})">Resume</button>
+                `;
+            case 'Cancelled':
+            case 'Completed':
+                return ''; // هیچ دکمه‌ای برای این وضعیت‌ها نمایش داده نمی‌شود
+            default:
+                return '';
+        }
+    }
+</script>
+</body>
+</html>

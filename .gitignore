@@ -1,0 +1,7 @@
+/electron-gui/node_modules/*
+.idea
+/downloads/
+/electron-gui/binaries/*
+/electron-gui/release-builds/*
+/electron-gui/package-lock.json
+/dist/
