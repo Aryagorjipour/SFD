@@ -19,12 +19,8 @@
     "productName": "Smart File Downloader",
     "files": [
       "dist/**/*",
-      "binaries/**/*",
       "main.js",
-      "preload.js",
-      "index.html",
-      "node_modules/**/*",
-      "package.json"
+      "preload.js"
     ],
     "directories": {
       "output": "release-builds"

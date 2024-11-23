@@ -1,7 +1,6 @@
-/electron-gui/node_modules/*
 .idea
-/downloads/
-/electron-gui/binaries/*
-/electron-gui/release-builds/*
-/electron-gui/package-lock.json
-/dist/
+/backend/downloads/
+/frontend/electron-gui/node_modules/*
+/frontend/electron-gui/binaries/*
+/build/release-builds/*
+/frontend/electron-gui/package-lock.json
