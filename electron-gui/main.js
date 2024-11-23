@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain } = require('electron');
+const { app, BrowserWindow, ipcMain, Menu } = require('electron');
 const path = require('path');
 const { execFile } = require('child_process');
 const axios = require('axios');
@@ -16,6 +16,40 @@ function createWindow() {
         },
     });
     mainWindow.loadFile('index.html');
+
+    const menuTemplate = [
+        {
+          label: 'Test',
+          submenu: [
+            {
+              label: 'Undo',
+              role: 'undo',
+            },
+            {
+              label: 'Redo',
+              role: 'redo',
+            },
+            { type: 'separator' },
+            {
+              label: 'Cut',
+              role: 'cut',
+            },
+            {
+              label: 'Copy',
+              role: 'copy',
+            },
+            {
+              label: 'Paste',
+              role: 'paste',
+            },
+          ],
+        },
+      ];
+
+      const menu = Menu.buildFromTemplate(menuTemplate);
+
+      Menu.setApplicationMenu(menu);
+
 
     setInterval(async () => {
         try {
