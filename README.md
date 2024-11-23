@@ -58,6 +58,10 @@ A command-line application written in Go that allows users to download multiple 
     ```bash
     cancel <ID>
     ```
+    - watch download list:
+    ```bash
+    watch
+    ```
    - Exit the application:
    ```bash
     exit
