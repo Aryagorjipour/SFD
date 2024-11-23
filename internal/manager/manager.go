@@ -1,9 +1,14 @@
 package manager
 
 import (
+	"bufio"
 	"fmt"
-	"github.com/Aryagorjipour/smart-file-downloader/internal/task"
+	"os"
+	"strings"
 	"sync"
+	"time"
+
+	"github.com/Aryagorjipour/smart-file-downloader/internal/task"
 )
 
 // DownloadManager manages download tasks
@@ -91,4 +96,37 @@ func (dm *DownloadManager) GetTasks() map[int]*task.DownloadTask {
 		copyTasks[k] = v
 	}
 	return copyTasks
+}
+
+func (mgr *DownloadManager) Watch() {
+	reader := bufio.NewReader(os.Stdin)
+	ticker := time.NewTicker(1 * time.Second)
+	defer ticker.Stop()
+
+	done := make(chan bool)
+
+	go func() {
+		for {
+			select {
+			case <-ticker.C:
+				mgr.ListDownloads()
+			case <-done:
+				return
+			}
+		}
+	}()
+
+	for {
+		input, err := reader.ReadString('\n')
+		if err != nil {
+			fmt.Println("Error reading input:", err)
+			continue
+		}
+		if strings.TrimSpace(input) == "q" {
+			break
+		}
+	}
+
+	done <- true
+	fmt.Println("Exited watch mode.")
 }
