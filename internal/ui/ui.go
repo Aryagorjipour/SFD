@@ -3,11 +3,11 @@ package ui
 import (
 	"bufio"
 	"fmt"
-	"github.com/Aryagorjipour/smart-file-downloader/internal/manager"
 	"os"
 	"strconv"
 	"strings"
-	"time"
+
+	"github.com/Aryagorjipour/smart-file-downloader/internal/manager"
 )
 
 // Start starts the UI
@@ -16,15 +16,6 @@ func Start(mgr *manager.DownloadManager) {
 	fmt.Println("Concurrent File Downloader")
 	fmt.Printf("Downloads will be saved to: %s\n", mgr.DownloadDir)
 
-	// Start a goroutine to display progress periodically
-	go func() {
-		for len(mgr.Tasks) > 0 {
-			time.Sleep(2 * time.Second)
-			mgr.ListDownloads()
-			fmt.Println("------")
-		}
-	}()
-
 	for {
 		fmt.Println("Commands:")
 		fmt.Println("1. add <URL>")
@@ -32,7 +23,8 @@ func Start(mgr *manager.DownloadManager) {
 		fmt.Println("3. pause <ID>")
 		fmt.Println("4. resume <ID>")
 		fmt.Println("5. cancel <ID>")
-		fmt.Println("6. exit")
+		fmt.Println("6. watch")
+		fmt.Println("0. exit")
 		fmt.Print("Enter command: ")
 		input, err := reader.ReadString('\n')
 		if err != nil {
@@ -89,6 +81,8 @@ func Start(mgr *manager.DownloadManager) {
 				continue
 			}
 			mgr.CancelDownload(id)
+		case "watch":
+			mgr.Watch()
 		case "exit":
 			fmt.Println("Exiting...")
 			os.Exit(0)
