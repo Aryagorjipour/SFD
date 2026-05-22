@@ -1,10 +1,13 @@
 package main
 
 import (
+	"flag"
 	"fmt"
-	"github.com/Aryagorjipour/smart-file-downloader/internal/manager"
-	"github.com/Aryagorjipour/smart-file-downloader/internal/ui"
 	"os"
+
+	"github.com/Aryagorjipour/smart-file-downloader/internal/manager"
+	"github.com/Aryagorjipour/smart-file-downloader/internal/tui"
+	"github.com/Aryagorjipour/smart-file-downloader/internal/ui"
 )
 
 func ensureDownloadDir(dir string) error {
@@ -19,23 +22,34 @@ func ensureDownloadDir(dir string) error {
 }
 
 func main() {
-	downloadDir := "./downloads"
+	// Define flags
+	downloadDir := flag.String("dir", "./downloads", "Download directory path")
+	legacyUI := flag.Bool("legacy-ui", false, "Use legacy command-line UI instead of TUI")
+	flag.Parse()
 
-	if len(os.Args) > 1 {
-		downloadDir = os.Args[1]
-	}
-
-	err := ensureDownloadDir(downloadDir)
+	// Ensure download directory exists
+	err := ensureDownloadDir(*downloadDir)
 	if err != nil {
-		fmt.Printf("error creating download directory: %v", err)
+		fmt.Printf("error creating download directory: %v\n", err)
 		os.Exit(1)
 	}
 
-	mgr, err := manager.NewDownloadManager(downloadDir)
+	// Initialize download manager
+	mgr, err := manager.NewDownloadManager(*downloadDir)
 	if err != nil {
 		fmt.Printf("Error initializing download manager: %v\n", err)
 		os.Exit(1)
 	}
 
-	ui.Start(mgr)
+	// Start appropriate UI
+	if *legacyUI {
+		ui.StartLegacy(mgr)
+	} else {
+		// Try to start TUI, fallback to legacy on error
+		if err := tui.Start(mgr); err != nil {
+			fmt.Printf("TUI error: %v\n", err)
+			fmt.Println("Falling back to legacy UI...")
+			ui.StartLegacy(mgr)
+		}
+	}
 }

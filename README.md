@@ -4,15 +4,18 @@
 ![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/Aryagorjipour/SFD/ci.yml)
 ![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/Aryagorjipour/SFD)
 
-A command-line application written in Go that allows users to download multiple files concurrently with features like pausing, resuming, and canceling downloads.
+A command-line application written in Go that allows users to download multiple files concurrently with a modern Terminal UI (TUI), featuring batch URL input, automatic cleanup, and real-time progress tracking.
 
 ## Features
 
-- **Concurrent Downloads:** Download multiple files simultaneously using goroutines.
-- **Progress Tracking:** Real-time display of download progress for each file.
-- **Pause/Resume:** Ability to pause and resume individual downloads.
-- **Cancel Downloads:** Option to cancel ongoing downloads.
-- **Configurable:** Customize download directory and maximum concurrent downloads via configuration.
+- **Modern TUI:** Beautiful terminal interface with mouse support and keyboard shortcuts
+- **Batch URL Input:** Paste multiple URLs at once (newline-separated)
+- **Smart URL Display:** Automatically trims query parameters for cleaner viewing
+- **Auto-Cleanup:** Completed, canceled, and errored downloads are automatically removed
+- **Concurrent Downloads:** Download multiple files simultaneously using goroutines
+- **Real-time Progress:** Live progress bars and status updates
+- **Pause/Resume/Cancel:** Full control over individual downloads
+- **Configurable:** Customize download directory via flags
 
 ## Installation
 
@@ -30,38 +33,67 @@ A command-line application written in Go that allows users to download multiple 
    The executable will be located at ./bin/downloader.
 
 ## Usage
-   ```bash
-   ./bin/downloader [download_directory]
+
+### Modern TUI (Default)
+
+Run the application to launch the Terminal UI:
+
+```bash
+./bin/downloader
+```
+
+With custom download directory:
+```bash
+./bin/downloader --dir ./my_downloads
+```
+
+#### TUI Keyboard Shortcuts
+
+- **`a`** - Add batch URLs (paste multiple URLs, one per line)
+- **`↑/↓` or `k/j`** - Navigate between downloads
+- **`p`** - Pause selected download
+- **`r`** - Resume selected download
+- **`c`** - Cancel selected download
+- **`q` or `Ctrl+C`** - Quit application
+
+#### Adding Batch URLs
+
+1. Press `a` to enter batch input mode
+2. Paste your URLs (one per line), for example:
    ```
-- _Example_:
-   ```bash
-   ./bin/downloader ./my_downloads
+   https://example.com/file1.mp4
+   https://example.com/file2.mp4
+   https://example.com/file3.mp4
    ```
-- ### Commands
-    - Download a file:
-    ```bash
-    download <URL>
-    ```
-    - List all downloads:
-    ```bash
-    list
-    ```
-    - Pause a download:
-    ```bash
-    pause <ID>
-    ```
-    - Resume a download:
-    ```bash
-    resume <ID>
-    ```
-    - Cancel a download:
-    ```bash
-    cancel <ID>
-    ```
-   - Exit the application:
-   ```bash
-    exit
-   ```
+3. Press `Ctrl+S` to submit
+4. Press `Esc` to cancel
+
+#### Features
+
+- **Automatic URL Trimming:** Long URLs with query parameters are automatically cleaned
+  - Before: `https://example.com/file.mp4?md5=xxx&u=yyy&expires=zzz`
+  - After: `https://example.com/file.mp4`
+- **Auto-Cleanup:** Completed, canceled, and errored downloads disappear automatically
+- **Real-time Updates:** Download progress refreshes every second
+- **Mouse Support:** Click buttons (coming soon)
+
+### Legacy CLI Mode
+
+For the classic command-line interface:
+
+```bash
+./bin/downloader --legacy-ui
+```
+
+#### Legacy Commands
+
+- `add <URL>` - Download a file
+- `list` - List all downloads
+- `pause <ID>` - Pause a download
+- `resume <ID>` - Resume a download
+- `cancel <ID>` - Cancel a download
+- `watch` - Auto-refresh download list
+- `exit` - Exit the application
 
 ## Configuration
 

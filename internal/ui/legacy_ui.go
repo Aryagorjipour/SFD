@@ -10,8 +10,8 @@ import (
 	"github.com/Aryagorjipour/smart-file-downloader/internal/manager"
 )
 
-// Start starts the UI
-func Start(mgr *manager.DownloadManager) {
+// StartLegacy starts the legacy command-line UI
+func StartLegacy(mgr *manager.DownloadManager) {
 	reader := bufio.NewReader(os.Stdin)
 	fmt.Println("Concurrent File Downloader")
 	fmt.Printf("Downloads will be saved to: %s\n", mgr.DownloadDir)
